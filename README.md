@@ -27,12 +27,7 @@ The application adopts a decoupled 3-tier architecture:
 
 ```mermaid
 graph TD
-    subgraph Client Layer ["Frontend (React + Vite :5173)"]
-        UI[React UI Pages & Components]
-        AuthCtx[AuthContext]
-        CartCtx[CartContext]
-        AxiosClient["Axios Interceptor (api.js)"]
-        SupaClient["Client Supabase SDK (lib/supabase.js)"]
+   
     end
 
     subgraph Server Layer ["Backend API (Node.js + Express :5000)"]
