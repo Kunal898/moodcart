@@ -1,11 +1,12 @@
 const supabase = require('../config/supabase');
 const { createClient } = require('@supabase/supabase-js');
 
-// Anon client for generating user JWT sessions
-const anonClient = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
+// Client for signing in (safely falls back to SERVICE_ROLE_KEY if ANON_KEY is not provided on Render)
+function getAuthClient() {
+  const key = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) return supabase;
+  return createClient(process.env.SUPABASE_URL, key);
+}
 
 /**
  * Register a user and IMMEDIATELY approve/confirm their email
@@ -76,7 +77,8 @@ async function register(req, res) {
     }
 
     // Generate active session for instant login
-    const { data: sessionData, error: sessionErr } = await anonClient.auth.signInWithPassword({
+    const authClient = getAuthClient();
+    const { data: sessionData, error: sessionErr } = await authClient.auth.signInWithPassword({
       email: cleanEmail,
       password: password,
     });
@@ -141,8 +143,10 @@ async function login(req, res) {
 
     const cleanEmail = email.trim().toLowerCase();
 
+    const authClient = getAuthClient();
+
     // First attempt to sign in
-    let { data, error } = await anonClient.auth.signInWithPassword({
+    let { data, error } = await authClient.auth.signInWithPassword({
       email: cleanEmail,
       password: password,
     });
@@ -157,7 +161,7 @@ async function login(req, res) {
         await supabase.auth.admin.updateUserById(user.id, { email_confirm: true });
 
         // Retry login
-        const retryResult = await anonClient.auth.signInWithPassword({
+        const retryResult = await authClient.auth.signInWithPassword({
           email: cleanEmail,
           password: password,
         });
