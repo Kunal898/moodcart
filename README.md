@@ -21,34 +21,6 @@
 
 ---
 
-## 🏛️ High-Level Architecture
-
-The application adopts a decoupled 3-tier architecture:
-
-```mermaid
-
-    %% Client Auth
-    AuthCtx -->|"Sign up / Sign in / Session Listener"| SupaAuth
-    UI --> AuthCtx
-    UI --> CartCtx
-
-    %% Client to Backend
-    CartCtx --> AxiosClient
-    UI --> AxiosClient
-    AxiosClient -->|"Bearer JWT + REST Requests"| Server
-
-    %% Backend flow
-    Server --> AuthMW
-    AuthMW -->|"Verify Token via getUser()"| SupaAuth
-    AuthMW --> RoleMW
-    RoleMW --> Controllers
-    Controllers --> SupaAdmin
-    Multer -->|"Upload Image Buffer"| SupaAdmin
-
-    %% Backend to Database & Storage
-    SupaAdmin -->|"SQL Queries (Bypass RLS)"| DB
-    SupaAdmin -->|"Image Storage API"| Storage
-```
 
 ### Technology Matrix
 
