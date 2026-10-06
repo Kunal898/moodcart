@@ -26,24 +26,6 @@
 The application adopts a decoupled 3-tier architecture:
 
 ```mermaid
-graph TD
-   
-    end
-
-    subgraph Server Layer ["Backend API (Node.js + Express :5000)"]
-        Server[Express Server (server.js)]
-        AuthMW[Auth Middleware (JWT Verify)]
-        RoleMW[Admin Role Guard]
-        Controllers["Controllers (Products, Cart, Orders, Categories)"]
-        Multer[Multer Memory Storage]
-        SupaAdmin["Backend Supabase SDK (Service Role)"]
-    end
-
-    subgraph Cloud Layer ["Supabase BaaS (PostgreSQL + Auth + Storage)"]
-        SupaAuth["Supabase Auth (auth.users)"]
-        DB[("PostgreSQL Database (RLS Enabled)")]
-        Storage["Supabase Storage ('products' Bucket)"]
-    end
 
     %% Client Auth
     AuthCtx -->|"Sign up / Sign in / Session Listener"| SupaAuth
